@@ -71,12 +71,12 @@ void Inference::cuda_graph_inference() {
     cudaErrCheck(cudaStreamDestroy(stream));
 }
 
-__global__ void kernel_inference(
-    nvinfer1::IExecutionContext& context, std::vector<void*>& buffer,
-    cudaStream_t stream, int batch_size) {
-    context.enqueue(batch_size, buffer.data(), stream, nullptr);
-    cudaStreamSynchronize(stream);
-}
+// __global__ void kernel_inference(
+//     nvinfer1::IExecutionContext& context, std::vector<void*>& buffer,
+//     cudaStream_t stream, int batch_size) {
+//     context.enqueue(batch_size, buffer.data(), stream, nullptr);
+//     cudaStreamSynchronize(stream);
+// }
 
 void Inference::do_inference(
     cudaStream_t stream,
@@ -118,5 +118,9 @@ void Inference::do_inference(
     //         graph_.update_kernel_node(name, params);
     //     }
     // }
+
+    context_->enqueue(batch_size, buffer_.data(), stream, nullptr);
+    cudaStreamSynchronize(stream);
+
     graph_.end_capture(stream);
 }
